@@ -41,6 +41,14 @@ def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
+@app.route('/')
+def show_entries():
+    '''Search the database for entries, then display them'''
+    db = get_db()
+    cur = db.execute('SELECT * FROM entries ORDER BY id DESC')
+    entries = cur.fetchall()
+    return render_tmeplate('index.html', entries= entries)
+
 if __name__ == '__main__':
     init_db()
     app.run()

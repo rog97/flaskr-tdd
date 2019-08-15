@@ -17,7 +17,7 @@ class BasicTestCase(unittest.TestCase):
         tester = os.path.exists("flaskr.db")
         self.assertTrue(tester)
 
-class FlaskTestCase(unittest.TestCase):
+class FlaskrTestCase(unittest.TestCase):
 
     def setUp(self):
         '''Set up a blank temp database before each test'''
@@ -33,17 +33,21 @@ class FlaskTestCase(unittest.TestCase):
 
     def login(self, username, password):
         '''Login helper function'''
-        return self.app.post('/login', data= dict(
+        return self.app.post('/login', data=dict(
             username=username,
             password=password
-        ), follow_redirects= True)
+        ), follow_redirects=True)
+
+    def logout(self):
+        '''Logout helper function'''
+        return self.app.get('/logout', follow_redirects= True)
 
     # assert functions
 
     def test_empty_db(self):
         '''Ensure database is blank'''
         rv = self.app.get('/')
-        assert b'No entries here so far' in rv.data
+        assert b'No entries yet. Add some!' in rv.data
 
     def test_login_logout(self):
         '''Test login and logout using helper functions'''
@@ -74,11 +78,11 @@ class FlaskTestCase(unittest.TestCase):
             app.app.config['USERNAME'],
             app.app.config['PASSWORD']
         )
-        rv = self.app.post('/add', data= dict(
+        rv = self.app.post('/add', data=dict(
             title='<Hello>',
             text='<strong>HTML</strong> allowed here'
         ), follow_redirects= True)
-        assert b'No entries here so far' not in rv.data
+        assert b'No entries yet. Add some!' not in rv.data
         assert b'&lt;Hello&gt;' in rv.data
         assert b'<strong>HTML</strong> allowed here' in rv.data
 
